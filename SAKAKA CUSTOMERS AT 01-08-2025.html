@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Data</title>
+    <style>
+        /* Basic Styling */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #444;
+            font-size: 24px;
+        }
+
+        /* Data Input Area */
+        #dataInput {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        /* Themed Button */
+        #loadButton {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        #loadButton:hover {
+            background-color: #0056b3;
+        }
+
+
+        /* Search Bar Styling */
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        /* Table Styling */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Link Styling */
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        #no-data-message {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+        }
+
+        /* --- MOBILE RESPONSIVE STYLES --- */
+        @media screen and (max-width: 768px) {
+            h1 { font-size: 20px; }
+            thead {
+                border: none; clip: rect(0 0 0 0); height: 1px;
+                margin: -1px; overflow: hidden; padding: 0;
+                position: absolute; width: 1px;
+            }
+            table { box-shadow: none; background-color: transparent; }
+            tr {
+                display: block; margin-bottom: 15px; background-color: #fff;
+                border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                border: 1px solid #ddd;
+            }
+            td {
+                display: block; text-align: right; border-bottom: 1px solid #eee;
+                padding-left: 45%; position: relative; min-height: 20px;
+            }
+            td::before {
+                content: attr(data-label); position: absolute; left: 15px;
+                width: calc(45% - 25px); padding-right: 10px; white-space: nowrap;
+                text-align: left; font-weight: bold; color: #555;
+            }
+            td:last-child { border-bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SAKAKA CUSTOMERS AT 01-08-2025</h1>
+
+    <textarea id="dataInput" style="display: none;" placeholder="Paste your data here in the format: CODE|ARABIC_NAME|ENGLISH_NAME|...">21061|اسواق توفير النبك المركزية | TAWFEER ALNABQ CENTRAL MARKETS|7PR2+9C9 An Nabk Abu|30.290910, 38.701121|0
+21124|اسواق ريف قارا  | REEF QARA MARKETS|R5QM+H9J Sakaka|29.838952, 40.183401|0
+20245|اسواق لقاء تبوك التجارية| LQAA TABUK MARKETS|CH2H+9P Tabuk|28.4010161,36.579267|0
+20319|مؤسسة عالم المنظفات التجارية|ALAM ALMONZFAT EST|W5MW+735 Sakaka|29.933147, 40.195232|14020.97
+20324|مؤسسة نجمة الخميس للمواد الغذائية| NGMT ALKHAMEES|MMH5+56X Turaif|31.677985, 38.658114|0
+20343|هايبر طيبات الرزق|TYBAT ALRIZK HAYBER|X5FQ+C97 Sakaka|29.973539, 40.188408|46581.18
+20349|مؤسسة العافية الطبية|ALAAFIA ALTBYA EST|X642+6FW Sakaka|29.955607, 40.201199|0
+20350|شركة سلة التوفير الراقية المحدودة|Slt altwfer rkya|X6G3+3FQ Sakaka|29.975208, 40.203747|6969.18
+20351|مؤسسة أحمد عبدالله علي العطاس التجارية مركز نور |NOOR CENTER|RV57+37J Dumah Al Ja|29.807705, 39.863136|0
+20365|شركة ناصرية الجوف لتجارة الجملة والتجزئة| NASRIT AJOOF COMPANY|X6J5+QV5 Sakaka|29.981880, 40.209743|20866.62
+20394|شركة الصخري العربيه التجارية | ALSAKHRY ALARABIA COMMERCIAL CO|X6M4+3XM Sakaka|29.982723, 40.207420|0
+20442|شركة كاسر الاسعار | price breaker company|88MP+PP4 Al Qurayyat|31.334273, 37.336815|1054.98
+20449|مؤسسة عبدالهادي عطاء البادي التجارية | ALBADY COMMERECAL EST|RV58+CJ4 Dumah Al Ja|29.808519, 39.866585|3608.36
+20451|مؤسسة خليفه خليف خليفة المعين التجارية | KHALEFA KHLEF EST|RV46+J42 Dumat al-Ja|29.8065214, 39.86026|10175.78
+20453|مؤسسة سلة الشامل للتجارة دومة الجندل | SALT ALSHAMEL EST FOR TRADING DOMT JNDL|QVX5+JWC Dumah Al Ja|29.799070, 39.859763|5171.61
+20460|تموينات اماني خاتم نمر الرويلي للمواد الغذائية | AMANY ALRWELY GROCERY|579V+4WV Zalom|30.167871, 40.294787|0
+20461|الاسواق المركزية الشفاء | CENTRAL MARKETS ALSHEEFAA|49HG+Q7V Suwayr|30.129498, 40.375680|0
+20463|تموينات شلال العزيزية للمواد الغذائية | SHLAL ALZIZIYA GROCERY|W5WQ+WF5 Sakaka|29.947256, 40.188721|0
+20465|تموينات الصفاه | ALSAFAT GROCERY|RRVX+3XW Dumah Al Ja|29.842741, 39.849946|0
+20469|تموينات الدحلان | ALDAHLAN GROCERY|QVXF+4Q3 Dumat al-Ja|29.797769, 39.874432|0
+20488|الاسواق المركزية الفيصلية | CENTRAL MARKETS ALFAISLIYA|496P+RHW Suwayr|30.112125, 40.386459|0
+20489|تموينات دايمة للمواد الغذائية | DAYMA GROCERY|W6H3+H3J Sakaka|29.928962, 40.202654|8509.38
+20500|مستودع وثلاجة سلة الثمرات | SALT ALTHEMAR|RV45+PW6 Dumah Al Ja|29.806790, 39.859780|661
+20503|تموينات محمد عبدالله محمد الشهري للمواد الغذائية|  ALSHEHAY GOCERY|X6XF+H2H Sakaka|29.998927, 40.222607|0
+20505|مؤسسة ريان السعودية للتجارة |RAYAN ALSAUDIA EST FOR TRADING|X52V+XX8 Sakaka|29.952404, 40.194944|0
+20507|ركن المسافر للمواد الغذئية | ROKN ALMOSAFER FOR FOOD STUFF|V678+46R Sakaka|29.862851, 40.215526|6006.59
+20508|محل طيف مطرد خالد الرويلي للتجارة سكاكا |TAIF ALRWILY SHOP|X7M2+J88 Sakaka|29.984044, 40.250822|0
+20509|مؤسسة عالم لؤلؤة الجوف التجارية |ALAM LOAALOAAT ALJOUF EST |X66C+4R3 Sakaka|29.960263, 40.222051|0
+20512|تموينات النمرة للمواد الغذائية|NEMRA GROCERY FOR FOODSTUFF|366J+F92 Sakaka|30.061140, 40.230903|0
+20514|بقالة رهاف بدر كساب الضبعان للمواد الغذائية|RAHAF BADR KSBAN GROCERY|49HG+MPP Suwayr|30.129210, 40.376827|0
+20517|تموينات عامر شايش الهباد للمواد الغذائية | AAMER ALHABAD GROCERY|W5HQ+XQ6 Sakaka|29.929903, 40.189399|1000
+20518|تموينات الحبوب | ALHABOB GROCERY|RV59+77G Dumah Al Ja|29.808186, 39.868208|0
+20523|تموينات فهد|FAHD GROCERY|QVX8+9XG Dumah Al Ja|29.798427, 39.867465|0
+20529|تموينات روعة الجوف للمواد الغذائية | ROWAAT ALJOUF GROCERY|X67C+4RJ Sakaka|29.962828, 40.222006|0
+20530|اسواق وسط اقارا للمواد الغذائية | WASAT KARA MARKETS FOR FOOD STUFF|V699+CGM Sakaka|29.868582, 40.218800|199.98
+20531|مؤسسة التحالف التجارية | ALTAHLOF COMMERICAL EST|W6X8+562 Sakaka|29.947896, 40.215514|0
+20532|تموينات عون عبدالله صالح الصيعري | OUN ABDALLA ALSAIAARY GROCERY|V677+7XQ Sakaka|29.863204, 40.214989|600
+20536|محل زحل للمنتجات البلاستيكية | ZOHAL SHOP FOR PLASTIC PRODUCTS|X6J6+XGV Sakaka|29.982483, 40.211285|3985.28
+20901|مؤسسة عروض زحل بالجملة التجارية | AROOD ZOHAL BLGOMLA TRADING EST|X6M6+2GM Sakaka|29.982597, 40.211288|3985.28
+20539|هزاز الجوف للتسوق | HAZZAZ ALJOOF FOR SHOPPING|W6XG+26Q Sakaka|29.947591, 40.225599|0
+20541|محل المجوهرة مدالله الجميل الرويلي للتجارة|ALJAWHARA ALRWILY FOR TRADING|X622+74X Sakaka|29.950730, 40.200369|0
+20542|اسواق النهضة الثاني للمواد الغذائية | ALNAHDA ALTHANI MARKETS FOR FOOD STUFFS|V639+P6R Sakaka|29.854373, 40.218009|1612.62
+20544|شركة زاوية الوسام التجارية 1 سكاكا|ZAWIAT ALWESAM COMMERCIAL COMPANY 1 SKAKA|W6XG+R4C Sakaka|29.949575, 40.225270|0
+20547|محل اسامة حمدان مسهوج الرويلي | OSAMA HAMDAN SHOP|W6C5+2F4 Sakaka|29.920006, 40.208708|0
+20550|شركة علي سعيد البيشي التجارية  | ALI SAEED ALBIASHY COMMERICAL COMPANY|W6W9+FJW Sakaka|29.946226, 40.219077|0
+20552|تموينات الاحبة للمواد الغذائية | ALAAHEBA GROCERY FOR FOOD STUFF|V6XH+X24 Sakaka|29.899893, 40.227570|1053.22
+20554|تموينات سلة الفيصلية|SALT ALFAISLYA GROCERY|49CV+J9F Suwayr|30.121574, 40.393425|0
+20561|سوبر ماركت الكريم | ALKAREEM SUPERMARKET|R5WR+GQW Sakaka|29.846374, 40.191942|0
+20563|تموينات غذاء القوت للمواد الغذائية | GHEZAA ALQUOT GROCERY FOR FOOD STUFF|W5CH+6FV Sakaka|29.920614, 40.178663|0
+20566|تموينات عبدالله فرزل عايض الفرزل للمواد الغذائية | ALFRZAL GROCERY|V6G9+FVV Sakaka|29.876227,40.219684|0
+20568|تموينات الجارد | ALGARED GROCERY|V6H9+5MC Sakaka|29.877939, 40.219128|2550.4
+20572|مؤسسة فهد عبدالرحمن فهد السهيان لتجارة الاغذية|FAHD ALSAHYAN EST|W549+W88 Sakaka|29.907295,40.168322|0
+20573|الشامل للبلاستيك والمنظفات |ALSHAMEL For plastics and detergents|X6J6+R6G Sakaka|29.982053,40.210584|9600.15
+20575|تموينات رمز الناصرية | RAMZ ALNASRYA GROCERY|W5MW+4P9 Sakaka|29.932791, 40.196865|-0.01
+20577|مؤسسة عبدالله عبدالعزيز أحمد الفلاح للتجارة | ABDULLA ABDELAZIZ ALFALAH FOR TRADING|W6X8+562 Sakaka|29.947896, 40.215514|0
+20580|تموينات هناء عودة | Hanaa aouda grocery|W5XM+Q89 Sakaka|29.9494205,40.183355|0
+20581|تموينات نبراس العلاء للمواد الغذائية | NIBRAS ALOLAA GROCERY FOR FOODSTUFF|X6VQ+RPW Sakaka|29.994624, 40.239313|0
+20582|تموينات ركن عالم وسام الجوف للواد الغذائية | ROKN ALAM WSAM ALJOUF GROCERY|W5MX+692 Sakaka|29.933015, 40.198376|0
+20583|محل فاتن عبدالعزيز حياء الرويلي للملابس الجاهزه | FATEN ALRWELY SHOP|V6FC+V36 Sakaka|29.874672, 40.220149|597.55
+20584|شركة وسيط الامتياز للتجارة والتسويق حاشي باشا سكاكا | WASEET ALEMTYAZ  HASHY BASHA|X67C+VQ6 Sakaka|29.964665,40.221895|0
+20587|تموينات شيم الجوف للمواد الغذاء | SHEEM ALJOUF GROCERY FOR FOOD STUFF|X5HM+R89 Sakaka|29.979545, 40.183348|0
+20589|شركة مفتاح الاعمال التجارية | MOFTAH ALAAMAL COMMICIAL COMPANY|W5XJ+V35 Sakaka|29.949631,40.180221|1109.23
+20590|تموينات حمده عبدالرحمن سلمان القعيد للمواد الغذائية (ميعاد)|HAMDA ALKAAEED GROCERY|RV58+8XM Dumah Al Ja|29.808339, 39.867436|0
+20592|شركة سوق الغذاء التجارية فرع قارا | FOOD MARKET TRD.CO QARA BRANCH|V656+6G9 Sakaka|29.8580373,40.211359|9238.52
+20593|مؤسسة رفوف التوفير التجارية | RFOOF ALTAWFEER COMMERCIAL EST|X5HM+PXH Sakaka|29.979304, 40.184978|0
+20594|شركة الصخري العربية التجارية |ALSAKHRY ALARABYA COMMIRICAL COMPANY|W6W9+87P Sakaka|29.945843, 40.218204|16925.13
+20595|مؤسسة اسطورة للمنتجات البلاستيكية | ALOSTORA EST FOR PLASTIC PRODUCTS|X6C3+CMW Sakaka|29.971121, 40.204207|17130.12
+20597|تموينات غذاء القوت للمواد الغذائية | GEZAA ALKOOT GROCERY FOR FOODSTUFF|X6CR+5R3 Sakaka|29.970386, 40.242062|0
+20600|شركة زاوية الوسام التجارية 2 سكاكا | ZAWYAT ALWESSAM COMMERCIAL COMPANY 2 SKAKA |X53W+3F6 Sakaka|29.952673, 40.196155|0
+20602|مؤسسة سلة الشامل للتجارة سكاكا | SLAT ALSHAMEL EST FOR TEDING SKAKA|X6MW+343 Sakaka|29.982626, 40.245302|4028.47
+20604|شركة رمز البشائر للتجارة | RAMZ ABASHER COMPANY FOR TRADING|X638+4MV Sakaka|29.952872, 40.216660|4302.97
+20607|تموينات يوسف الهادي | youssef alhady grocery|W5QR+28W Sakaka|29.937609, 40.190821|1722.04
+20608|مؤسسة مختارة للمنتجات البلاستيكية| MOKHTARA EST FOR PLASTIC PRODUCTS|W6X3+6PR Sakaka|29.948118, 40.204275|2363.75
+20609|مؤسسة عالم لؤلؤة الجوف التجارية | ALAM LOAALOAAT ALJOUF COMMERCIAL EST|X66C+6QQ Sakaka|29.960590, 40.221993|0
+20610|شركة خيال مكس التجارية الاسواق المركزية|Khial mix central markets|496P+XHP Suwayr|30.112470, 40.386458|0
+20611|مؤسسة نوف محمد حسن الزهراني للمواد الغذائية |NOOF EST FOR FOODSTUFF|X77J+WM5 Sakaka|29.964761, 40.281745|0
+20612|تموينات ريم عايض فرزل الفرزل للمواد الغذائية |Reem alfarzal grocery|W5PX+9WR Sakaka|29.935991, 40.199758|503.88
+20619|مؤسسة فن الفيصلية للمواد الغذائية المحمدية ن | FN ALFAISLIA EST FOR FOODSTUFF Almuhammadiyah H|W5JQ+MF7 Sakaka|29.931675, 40.188658|0
+20620|تموينات جوهرة الزاوية للمواد الغذائية | GOWHRT ALZAWIA GROCERY FOR FOODSTUFF|X68F+C74 Sakaka|29.966016, 40.223188|0
+20622|اسوق جوهرة التوفير للمواد الغذائية| GAWHRT ALTAWFEER MARKETS FOR FOODSTUFF|W6W7+XVJ Sakaka|29.947455, 40.214656|0
+20623|اسواق نسمة الشمال اثنين للمواد الغذائية | NESMT ALSHMAL MARKETS|W6W3+VH3 Sakaka|29.947132, 40.203924|0
+20628|مؤسسة عبدالعزيز محمد علي ربيع للتجارة | ABDELAZIZZ MOHAMED ALI ARABEE EST FOR TRADING|X6J5+6X2 Sakaka|29.980510, 40.209889|0
+20630|مؤسسة جوهرة الباسم التجاريه سكاكا | GAWHRT ALBASSEM COMMERCIAL EST SKAKA|X6G3+2C8 Sakaka|29.975047, 40.203571|2628.75
+20631|شركة السامي فود التجارية | AlSami Food Trading Company|W683+2XJ Sakaka|29.915077, 40.204888|0
+20632|مؤسسة مائدة المنزل التجارية | MAAADAT ALMANZL COMMERCIAL EST|495P+96X Suwayr|30.108485, 40.385602|1400
+20634|شركة عالم التوفير المتميز دومة الجندل | ALAM ALTAWFEER AMOTAMIEZ DMT GNDAL CO|RV47+JVC Dumah Al Ja|29.806572, 39.864632|0
+20641|مؤسسة زاوية القصوى لتجارة الأغذية|ZAWYAT ALQOSWAA EST FOR FOOD TRADING|X6J6+9G8 Sakaka|29.980924, 40.211321|0
+20649|مركز نور | NOUR CENTER|RV57+37J Dumah Al Ja|29.807705, 39.863136|5185.79
+20652|مؤسسة قطاف الثمار التجارية | FRUIT PICKING COMMERCIAL EST|X622+F85 Sakaka|29.951149, 40.200851|750
+20655|ثلاجة صالح الشايع |SALEH ALSHAYA FRIDGE|X6J6+F2X Sakaka|29.981242, 40.210124|0
+20656|تموينات أجدا للمواد الغذائية | AGDA GROCERY FOR FOODSTUFF|W6P3+7PP Sakaka|29.935721, 40.204318|0
+20658|بقالة رهاف بدر كساب الضبعان للمواد الغذائية | RAHAF BADR KASAB ALDABAAN GROCERY FOR FOODSTUFF|X6VQ+RR9 Sakaka|29.994541, 40.239600|918.72
+20661|شركة زمن التوفير للتجارة|ZAMAN ALTAWFEER COMMERICAL COMPANY|X53W+GR5 Sakaka|29.953761, 40.197102|0
+20665|اسواق المحمدية للمواد الغذائية | ALMOHAMMDIAH MARKETS FOR FOODSTUFF|W6P4+56G Sakaka|29.935448, 40.205586|0
+20672|مؤسسة سنابل البمامة التجارية | SANABL ALYAMAMA TRADING EST|X7P2+5F5 Sakaka|29.985379, 40.251223|239.98
+20673|مركز حركات طيبة للتجارة | HARAKT TAYBA CENTER FOR TRADING|9W7V+XH7 Buraydah|26.364920, 43.943909|0
+20692|محل أحلى الاواني للاواني المنزلية | AHLA ALAAWANY store FOR HOUSEHOLD UTENSLIS|X673+R93 SAKAKA|29.964522, 40.203455|0
+20699|مؤسسة شمال قارا التجارية | SHAMAL KARA EST FOR TRADING|V6PF+V9R Sakaka|29.887228, 40.223394|809.23
+21078|شركة خط الباسم التجارية|KHAT ALBASM COMPANY FOR TRADING Skaka|X693+QC3 Sakaka|29.969396, 40.203535|257.35
+20728|بقالة ابراهيم ماجد عساف السرحاني | IBRAHIM MAGED ASSAF ALSRAHANY GROCERY|W5JW+XV7 Sakaka|29.932411, 40.197179|0
+20743|ثلاجة مكارم الشمال التجارية |MAKAREM ALSGAMAL COMMERCIAL REFRIGERATOR|X6J7+H68 Sakaka|29.981405, 40.213084|0
+20755|شركة كيان العليا العربية التجارية | KAYAN ALOLYA ALARABIA TRADING COMAPNY|X628+9PV Sakaka|29.951000, 40.216788|0
+20756|محل أجمل نظافة للتجارة | AGMAL NAZAFA SHOP FOR TRADING|W5JW+HGC Sakaka|29.931448, 40.196272|6468.29
+20757|اسواق عبدالهادي للمواد الغذاية | ABDELHADY MARKETS FOR FOODSTUFF|RV47+FJW Dumah Al Ja|29.806238, 39.864086|700
+20767|مؤسسة طيبات العز التجارية | TAYABAT ALEZZ TRADING EST|X6J5+GPF Sakaka|29.981309, 40.209287|0
+20769|تموينات حمدة البشير البركة للمواد الغذائية |HAMADA BARKA ALBASHEER BARKA GROCERY|QW65+64X Sakaka|29.760621, 39.907869|8688.06
+20771|شركة اسواق ركن الصالحيه التجارية سكاكا| ROKN ALSALHYA MARKETS|V6V7+8CF Sakaka|29.893312, 40.213551|10000
+20785|شركة سوق الغذاء التجارية فرع سوق خضار المركزي |FOOD MARKETS VEGETABLES MARKT BRANCH|X6J7+QX5 Sakaka|29.981882, 40.214985|5170.96
+20796|شركة الحياة الحديثة التجارية | ALHAYA AHDYTHA TRADING COMPANY|W6W9+FPF Sakaka|29.946185, 40.219307|-0.85
+20803|أوفر التوفير شركة الرخام العتيق التجارية | AWFAR ALTAWFEER ALROKHAM ALAATEEKTRADING COMPANY|RV57+283 Dumat al-Ja|29.807519, 39.863299|6621.99
+20806|مؤسسة صح غير للتجارة|SAH GHEER TRADING EST|X6M6+RFP Sakaka|29.984582, 40.211200|2062.61
+20807|شركة سوراي الشمال التجارية | SAWARY ALSHAMAL TRADING COMPANY|QVFM+7PV Dumat al-Ja|29.773230, 39.884311|0
+20810|مؤسسة فوز للمواد الغذائية | FOOZ EST FOR FOODSTUFF|W5XM+GMM Sakaka|29.948839, 40.184175|1993.33
+20811|شركة سوق الغذاء التجارية فرع بسيطا | FOOD MARKET TRADING COMPANY BSETA BRANCH|Tubarjal 74556|29.814842, 38.391793|0
+20813|اسواق صفراء الغدير | SAFRAA ALGHADEER MARKETS|RVG5+4R2 Dumat al-Ja|29.825259, 39.859516|2767.92
+20820|رهف للبلاستيك والمنظفات | RAHAF FOR PLASTIC AND CLEANING|X6C4+5XP Sakaka Saud|28.407756, 36.544213|0
+20828|اسواق ذوق الخيال المركزية|ZOOK ALKHYAL CENTRAL MARKETS|V639+W5P Sakaka Saud|29.854843,40.217946|0
+20829|تموينات فهد فيصل محمد الخناني للمواد الغذائية | FAHD FAISAL MOAHMED ALKHANANY GROCERY FOR FOODSTUFF|X688+HP3 Sakaka Saud|29.966384, 40.216795|597.18
+20830|فندق رتاج الخليج للشقق الفندقية | Retaj Al Khaleej Hotel Apartments|W5FW+GFX Sakaka|29.923862, 40.196229|0
+20841|تموينات الباسل | ALBASEL GROCERY|X6HP+VQR Sakaka|29.979740, 40.236890|0
+20851|اسواق وسم الشمال المركزية | WASM ALSHAMAL CENTRAL MARKETS|578V+WM7 Zalom|30.167299, 40.294167|2138.02
+20853|تموينات سلة تسالي | SALET TASALY GROCERY|X6V5+XJ8 Sakaka|29.994920, 40.209074|0
+20860|تموينات رواء عافت الزيد للمواد الغذائية | RWOAA AAEFAT ALZAYED GROCERY FOR FOOD STUFF|X6F6+8F4 Sakaka|29.973257, 40.211198|0
+20871|شركة رمز الاواني التجارية | RAMZ ALAWANY TRADING COMPANY|X673+VCR Sakaka|29.964735, 40.203511|0
+20872|جود التوفير  للمواد الغذائية | JOOD ALTAWFEER FOR FOODSTUFF|X5GM+W3C Sakaka|29.977301, 40.182631|4080.81
+20891|تموينات لؤلؤ النجود| LOAALOAA ALNJOUD GROCERY|V6C9+HRR Sakaka|29.871481, 40.219520|0
+20895|تموينات شرياف للمواد الغذائية | SHREAF GROCERY FOR FOODSTUFFS|X6XC+HXP Sakaka|29.998963, 40.222454|0
+20898|تموينات منابع الاخلاص للمواد الغذائية | MANABAA ALEEKHLAS GROCERY FOR  FOODSTUFFS|X6C2+M6P Sakaka|29.971712, 40.200577|0
+20911|تموينات مدار اليوم | MADAR ALYOUM GROCERY|X667+6RC Sakaka|29.960552, 40.214505|2677.82
+20912|شركة سوق الغذاء التجارية فرع المحمدية د | FOOD MARKETS TRADING CO ALMOHAMADYA D BRANCH|X628+88 Sakaka|29.951051, 40.216226|4830
+20921|شركة فن الفيصلية التجارية بحى السلمانية | FAN ALFAISLIYA TRADING CO SALMANYA|X5HQ+3J4 Sakaka|29.977639, 40.189063|8800
+20925|شركة الابريق الراقي للتجارة | ALEBREEQ ALRAQY CO FOR TRADING|X6G3+PX9 Sakaka|29.976799, 40.204974|0
+20927|تموينات قارا للمواد الغذائية | QARA GROCERY FOR FOOD STUFFS |V668+X23 سكاكا السعو|29.862398,40.215038|0
+20931|بقالة العقيل | ALOQEEL GROCERY|RV34+QPQ Dumat al-Ja|29.804470, 39.856850|0
+20932|شركة أسواق ومحامص دار الشيوخ التجارية دومة الجندل | Dar Al Shuyoukh Commercial Markets and Roasteries Company DOMA|QVX3+5RQ Dumat al-Ja|29.797951, 39.854610|0
+20933|مؤسسة غيث الندى التجارية|GHAEETH ALNADA TRADING EST|W6H2+2X5 Sakaka|29.927509, 40.202478|0
+20935|تموينات روابي للمواد الغذائية | RAWABY GROCERY FOR FOODSTUFFS|W5VW+R7P Sakaka Saud|29.944598, 40.195718|700.68
+20945|شركة واي سنتر للتجارة بسكاكا | Y CENTER COMPANY FOR TRADING SKAKA|W6WG+X6X, Sakakah 72|29.947490, 40.225906|10444.77
+20950|جود اللقائط للكماليات | JOUD ALLQAAT FOR LUXURIES|X6MP+9FX Sakaka Saud|29.983482, 40.236229|0
+20951|اسواق غذاء الشام | GHEZAA ALSHAM MARKETS|579V+8VW Zalom Saudi|30.168374, 40.294714|0
+20953|تموينات زاوية اللؤلؤة للمواد الغذائية | ZAWIAT ALOAALOAAH GROCERY FOR FOODSTUFF|X66C+5WJ Sakaka|29.960458,40.222277|1900.27
+20954|تموينات منابع الشمال للمواد الغذائية | MANABAA ALSHAMMAL GROCERY FOR FOODSTUFFS|W549+VW3 Sakaka Saud|29.907140, 40.169797|0
+20973|مؤسسة عبدالعزيز انور غضبان العناد للتجارة | ABDELAZIZ ANWAR GADBAN ALONAD EST FOR TRADING|X6J5+GW6 Sakaka|29.981276, 40.209759|0.08
+20976|شركة الفرصة الاقتصادية للتجارة | ALFORSA ALEQTSADYA COMPANY FOR TRADING|X6MP+9FX Sakaka|29.983482, 40.236229|0
+20982|تموينات نسمة المخطط للمواد الغذائية | NSMAT ALMOKHTATT GROCERY FOR FOODSTUFFS|X5CX+R5Q Sakaka|29.972080, 40.197992|0
+20993|مؤسسة فؤاد حمدان راشد الراشد للمواد الغذائية | FOUAAD HAMDAN RASHD ARRASHED EST FOR FOODATUFFS|7HX2X6H4+H3|29.978930,40.205184|20119.25
+20999|شركة فن الفيصلية التجارية | FN ALFAISLIYA TRADING COMPANY|496P+WGG Suwayr|30.112318, 40.386321|712.47
+21000|مؤسسة جمال خلف البادي التجارية | GAMAL KHALAF ALBADY EST FOR TRADING|496P+WGG Suwayr|30.112318, 40.386321|6334.2
+21008|تموينات جوف توفير للمواد الغذائية|JOUF TAWFEER GROCERY FOR FOODSTUFFS|X5HM+H8J Sakaka|29.978969, 40.183269|0
+21016|اسواق توفير الشمال للمواد الغذائية | TAWFEER ALSHMMAL MARKETS FOR FOODSTUFFS|RVQ2+6MG Dumat al-Ja|29.838072, 39.851707|0
+21019|تموينات زاوية الباسم للمواد الغذائية | ZAWYAT ALBASEM GROCERY FORFOODSTUFFS|RV46+447 Dumat al-Ja|29.805300, 39.860309|573.64
+21021|مؤسسة زاوية الرائد للمنتجات البلاستيكية | ZAWYAT ALRAAED EST FOR PLASTIC PRODUCTS|X6F3+6VC Sakaka|29.972964, 40.204721|1437.05
+21026|مؤسسة رزمة للتعبئة والتغليف | ROZMA EST FOR PACKING|W5HV+VW5 Sakaka|29.929638, 40.194847|2914.7
+21027|شركة الكيان الشمالية للتجارة | ALKAYA ALSHAMALYA TRDING COMPANY|X68F+87, Sakakah Sau|29.965806, 40.223147|0
+21028|مؤسسة اركان تازة |ARKAN TAZA EST|X683+F8H, Sakakah Sa|29.966188, 40.203291|0
+21043|اسواق السلمان التجارية | ALSALMAN TRADING MARKETS|495P+976 Suwayr Saud|30.108400, 40.385627|0
+21045|مؤسسة شرياف للتجارة2 | SHREERIAF EST FOR TRADING 2|49GJ+HJ2 Suwayr Saud|30.126398, 40.381519|0
+21058|تموينات قطوف الجندل مواد الغذائية | QTOOF ALJANDAL GROCERY FOR FOODSTUFFS|RR8R+3X5 Dumat al-Ja|29.815127, 39.842487|1200
+21059|تموينات احياء الخالدية للمواد الغذائية | AHYAA ALKHALDYA GROCERY FOR OODSTUFFS|QRPH+QHH Dumat al-Ja|29.786933, 39.828976|0
+21064|سواق زمرد الشام التجارية | ZMROD ALSHA TRADING MARKTS|X6J5+QW9 Sakaka Saud|29.981920, 40.209847|0.01
+21075|شركة باي بال للتجارة | PAYPAL COMPANY FOR TRADING|495P+964 Suwayr|30.108377, 40.385567|3903.46
+21084|شركة ترند فايف تن للتجارة |TREND FIVE TEN COMPANY FOR TRADING|X6P5+3MP Sakaka|29.985214, 40.209189|13318.86
+21085|محل اسماء طلال عبدالله الرديني للمواد الغذائية | ASMAA TALAL ABDALLA ALRDENY SHOP|W56W+5JH Sakaka|29.910426, 40.196622|2645.5
+21086|مؤسسة رمث الشمال للمواد الغذائية | RAMTH ALSHMAL EST FOR FOODSTUFFS|V6PF+RH4 Sakaka|29.887016, 40.223943|0
+21092|مطعم تمليحة | TAMLYHA RESTAURANT|X5HM+P6V Sakaka|29.979352, 40.183056|0
+21095|تموينات صقر |  SUPERMARKET SAQR|X6G2+6VM Sakaka|29.975583, 40.202187|300
+21101|اسواق سلة راف التجارية | SALT RAV TRADING MARKETS|X79H+3Q2 Sakaka|29.967641, 40.279405|0
+21119|شركة سواري الشمال التجارية | SAWARY ALSHAMAL TRADING COMPANY|RV75+HJC Dumat al-Ja|29.813926, 39.859025|0
+21133|تموينات سلطانة الشمال للمواد الغذائية | SULTANAT ASHAMAL GROCERY FOR FOODSTUFFS|W5PR+XCX Sakaka|29.937479, 40.191124|1577.7
+21134|تموينات عهود للمواد الغذائية | AOHOUD GROCERY FOR FOODSTUFFS|X693+VFH Sakaka|29.969679, 40.203723|200
+21153|مجمع الثلج المميز الطبي | ALTHALJ ALMOMAIYAZ MEDICAL COMPLEX|X6Q7+4C2 Sakaka|29.987776, 40.213535|0
+21154|تموينات خالد تركي الرديعان | KHALED TURKY ALRODYAAN GROCERY|X6P5+3P4 Sakaka|29.985143, 40.209336|0
+21162|مطعم مائة باوند | HUNDRED POUND RESTAURANT|X5FX+JWX Sakaka Saud|29.974101, 40.199862|0
+21183|تموينات كرم التوفير | KARAM ALTWFEER GROCERY|V6X8+MXC Sakaka|29.899188, 40.217388|4830
+21185|تموينات طيبات الخير للمواد الغذائية | TAYBAT ALKHEER GROCERY FOR FOODSTUFFS|X6J2+FW3 Sakaka|29.981137, 40.202303|0
+21194|جوف الدانة للتجارة | JOUF ALDANA FOR TRADING|V646+J58 Sakaka|29.856531, 40.210442|0
+21206|تموينات نقة الشامل للمواد الغذائية | NOQTAT ALSHAMMEL GROCERY FOR FOODSTUFFS|X6F6+7F2 Sakaka|29.973129, 40.211131|800
+21219|محامص الغوالي  | ALGHAWALY ROASTERS|X5CQ+MF5 Sakaka Saud|29.971636, 40.188732|0
+21225|جود اللقاء العائلي | JOOD ALLEQAA ALAALY|X5FJ+PFR Sakaka Saud|29.974354,40.181138|1530.05
+21227|تموينات هنادي للمواد الغذائية | HANADY GROCERY FOR FOODSTUFFS|RV75+FJ2 Dumat al-Ja|29.813636, 39.859027|3889.48
+
+
+</textarea>
+
+    <button style="display: none;" id="loadButton">Load / Refresh Data</button>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search by Code, Arabic Name, or English Name...">
+    </div>
+
+    <div class="table-container">
+        <table id="customerTable">
+            <thead>
+                <tr>
+                    <th>Customer Code</th>
+                    <th>Customer Name (Arabic)</th>
+                    <th>Customer Name (English)</th>
+                    <th>Google Maps Plus Codes</th>
+                    <th>Google Maps Coordinates</th>
+                    <th>Current Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table rows will be generated here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SCRIPT MOVED TO THE END OF BODY FOR RELIABILITY -->
+    <script>
+        // --- GET HTML ELEMENTS ---
+        const dataInputElement = document.getElementById('dataInput');
+        const loadButtonElement = document.getElementById('loadButton');
+        const tableBodyElement = document.querySelector("#customerTable tbody");
+
+        // --- DATA PROCESSING AND TABLE BUILDING ---
+        function buildTable() {
+            const data = dataInputElement.value;
+            tableBodyElement.innerHTML = ""; // Clear existing table data
+
+            // Filter out empty lines and header
+            const lines = data.split('\n').filter(line => line.trim() !== '' && !line.toUpperCase().includes("CUSTOMER CODE"));
+
+            if (lines.length === 0) {
+                tableBodyElement.innerHTML = '<tr><td colspan="6" id="no-data-message">No data to display. Paste data above and click the "Load" button.</td></tr>';
+                return;
+            }
+
+            let customerData = lines.map(line => {
+                const cells = line.split('|');
+                return {
+                    code: (cells[0] || '').trim(),
+                    nameAr: (cells[1] || '').trim(),
+                    nameEn: (cells[2] || '').trim(),
+                    plusCode: (cells[3] || '').trim(),
+                    coords: (cells[4] || '').trim(),
+                    balance: parseFloat(cells[5]) || 0
+                };
+            });
+
+            customerData.sort((a, b) => b.balance - a.balance);
+
+            customerData.forEach(customer => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td data-label="Code">${customer.code}</td>
+                    <td data-label="Arabic Name">${customer.nameAr}</td>
+                    <td data-label="English Name">${customer.nameEn}</td>
+                    <td data-label="Plus Codes">${customer.plusCode}</td>
+                    <td data-label="Coordinates">${createGoogleMapsLink(customer.coords)}</td>
+                    <td data-label="Balance">${customer.balance.toFixed(2)}</td>
+                `;
+                tableBodyElement.appendChild(row);
+            });
+        }
+
+        function createGoogleMapsLink(coordinates) {
+            if (coordinates) {
+                const latLong = coordinates.split(',').map(coord => coord.trim());
+                if (latLong.length === 2) {
+                    return `<a href="https://www.google.com/maps/?q=${latLong[0]},${latLong[1]}" target="_blank">View on Map</a>`;
+                }
+            }
+            return 'N/A';
+        }
+
+        // --- FILTER FUNCTION ---
+        function filterTable() {
+            const input = document.getElementById("searchInput");
+            const filter = input.value.toUpperCase();
+            const tr = tableBodyElement.getElementsByTagName("tr");
+
+            for (let i = 0; i < tr.length; i++) {
+                // Check if the row is a data row (has td elements)
+                if (tr[i].getElementsByTagName("td").length > 1) {
+                    const fullText = tr[i].textContent.toUpperCase();
+                    tr[i].style.display = fullText.indexOf(filter) > -1 ? "" : "none";
+                }
+            }
+        }
+        
+        // --- INITIALIZE ---
+        // 1. Assign event to the button (MOST RELIABLE)
+        loadButtonElement.addEventListener('click', buildTable);
+
+        // 2. Add live update when user types/pastes in textarea
+        dataInputElement.addEventListener('input', buildTable);
+        
+        // 3. Initial build when page loads
+        buildTable();
+    </script>
+
+</body>
+</html>
